@@ -1,3 +1,5 @@
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
 use display_info::DisplayInfo;
 use minifb::{Scale, Window, WindowOptions};
 
