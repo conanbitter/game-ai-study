@@ -1,7 +1,12 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+mod graphics;
+mod images;
+
 use display_info::DisplayInfo;
 use minifb::{Scale, Window, WindowOptions};
+
+pub const CELL_SIZE: usize = 38;
 
 const WINDOW_WIDTH: usize = 640;
 const WINDOW_HEIGHT: usize = 480;
