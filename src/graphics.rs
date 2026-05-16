@@ -6,7 +6,7 @@ pub struct Bitmap {
 
 pub struct Framebuffer {
     width: usize,
-    height: usize,
+    //height: usize,
     pub data: Vec<u32>,
 }
 
@@ -14,7 +14,7 @@ impl Framebuffer {
     pub fn new(width: usize, height: usize, background: u32) -> Framebuffer {
         Framebuffer {
             width,
-            height,
+            //height,
             data: vec![background; width * height],
         }
     }
