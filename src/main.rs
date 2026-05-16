@@ -8,14 +8,20 @@ use minifb::{Scale, Window, WindowOptions};
 
 use crate::{
     graphics::Framebuffer,
-    images::{BITMAP_CELL, BITMAP_O, BITMAP_OF, BITMAP_SELECT, BITMAP_X, BITMAP_XF},
+    images::{BITMAP_CELL, BITMAP_O, BITMAP_OF, BITMAP_SELECT, BITMAP_X, BITMAP_XF, CELL_SIZE},
 };
 
-const WINDOW_WIDTH: usize = 640;
-const WINDOW_HEIGHT: usize = 480;
+const BORDER: usize = 10;
+const BOARD_COLS: usize = 15;
+const BOARD_ROWS: usize = 10;
+
+const WINDOW_WIDTH: usize = BORDER * 2 + BOARD_COLS * CELL_SIZE;
+const WINDOW_HEIGHT: usize = BORDER * 2 + BOARD_ROWS * CELL_SIZE;
+
+const BACKGROUND_COLOR: u32 = 0x98AAB3;
 
 fn main() -> anyhow::Result<()> {
-    let mut buffer = Framebuffer::new(WINDOW_WIDTH, WINDOW_HEIGHT, 0x98AAB3);
+    let mut buffer = Framebuffer::new(WINDOW_WIDTH, WINDOW_HEIGHT, BACKGROUND_COLOR);
 
     let mut window = Window::new(
         "Game AI",
@@ -38,6 +44,12 @@ fn main() -> anyhow::Result<()> {
     window.set_position(new_pos_x, new_pos_y);
 
     window.set_target_fps(60);
+
+    for y in 0..BOARD_ROWS {
+        for x in 0..BOARD_COLS {
+            buffer.blit(&BITMAP_CELL, BORDER + x * CELL_SIZE, BORDER + y * CELL_SIZE);
+        }
+    }
 
     buffer.blit(&BITMAP_CELL, 100, 100);
     buffer.blit(&BITMAP_X, 140, 100);
