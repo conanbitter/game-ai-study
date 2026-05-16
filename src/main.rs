@@ -58,7 +58,48 @@ fn main() -> anyhow::Result<()> {
     buffer.blit(&BITMAP_OF, 180, 140);
     buffer.blit(&BITMAP_SELECT, 100, 140);
 
+    let mut cursor_pos: (i32, i32) = (0, 0);
+    let mut cursor_show = false;
+
     while window.is_open() && !window.is_key_down(minifb::Key::Escape) {
+        if let Some(mouse_pos) = window.get_mouse_pos(minifb::MouseMode::Discard) {
+            let new_cursor_pos = (
+                ((mouse_pos.0 - BORDER as f32) / CELL_SIZE as f32).floor() as i32,
+                ((mouse_pos.1 - BORDER as f32) / CELL_SIZE as f32).floor() as i32,
+            );
+            let new_cursor_show = new_cursor_pos.0 >= 0
+                && new_cursor_pos.1 >= 0
+                && new_cursor_pos.0 < BOARD_COLS as i32
+                && new_cursor_pos.1 < BOARD_ROWS as i32;
+
+            if cursor_show && (!new_cursor_show || new_cursor_pos != cursor_pos) {
+                buffer.blit(
+                    &BITMAP_CELL,
+                    BORDER + cursor_pos.0 as usize * CELL_SIZE,
+                    BORDER + cursor_pos.1 as usize * CELL_SIZE,
+                );
+            }
+
+            if new_cursor_pos != cursor_pos && new_cursor_show {
+                buffer.blit(
+                    &BITMAP_SELECT,
+                    BORDER + new_cursor_pos.0 as usize * CELL_SIZE,
+                    BORDER + new_cursor_pos.1 as usize * CELL_SIZE,
+                );
+            }
+
+            cursor_pos = new_cursor_pos;
+            cursor_show = new_cursor_show;
+        } else {
+            let new_cursor_show = false;
+            if cursor_show && !new_cursor_show {
+                buffer.blit(
+                    &BITMAP_CELL,
+                    BORDER + cursor_pos.0 as usize * CELL_SIZE,
+                    BORDER + cursor_pos.1 as usize * CELL_SIZE,
+                );
+            }
+        }
         window.update_with_buffer(&buffer.data, WINDOW_WIDTH, WINDOW_HEIGHT)?;
     }
 
