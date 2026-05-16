@@ -6,13 +6,16 @@ mod images;
 use display_info::DisplayInfo;
 use minifb::{Scale, Window, WindowOptions};
 
-pub const CELL_SIZE: usize = 38;
+use crate::{
+    graphics::Framebuffer,
+    images::{BITMAP_CELL, BITMAP_O, BITMAP_OF, BITMAP_SELECT, BITMAP_X, BITMAP_XF},
+};
 
 const WINDOW_WIDTH: usize = 640;
 const WINDOW_HEIGHT: usize = 480;
 
 fn main() -> anyhow::Result<()> {
-    let mut buffer: Vec<u32> = vec![0x98AAB3; WINDOW_WIDTH * WINDOW_HEIGHT];
+    let mut buffer = Framebuffer::new(WINDOW_WIDTH, WINDOW_HEIGHT, 0x98AAB3);
 
     let mut window = Window::new(
         "Game AI",
@@ -36,8 +39,15 @@ fn main() -> anyhow::Result<()> {
 
     window.set_target_fps(60);
 
+    buffer.blit(&BITMAP_CELL, 100, 100);
+    buffer.blit(&BITMAP_X, 140, 100);
+    buffer.blit(&BITMAP_XF, 180, 100);
+    buffer.blit(&BITMAP_O, 140, 140);
+    buffer.blit(&BITMAP_OF, 180, 140);
+    buffer.blit(&BITMAP_SELECT, 100, 140);
+
     while window.is_open() && !window.is_key_down(minifb::Key::Escape) {
-        window.update_with_buffer(&buffer, WINDOW_WIDTH, WINDOW_HEIGHT)?;
+        window.update_with_buffer(&buffer.data, WINDOW_WIDTH, WINDOW_HEIGHT)?;
     }
 
     Ok(())

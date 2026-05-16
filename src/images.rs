@@ -1,4 +1,4 @@
-use crate::{CELL_SIZE, graphics::Bitmap};
+use crate::graphics::Bitmap;
 
 macro_rules! include_u32 {
     ($path:expr) => {{
@@ -20,10 +20,52 @@ macro_rules! include_u32 {
     }};
 }
 
+pub const CELL_SIZE: usize = 38;
+
 static BITMAP_CELL_DATA: [u32; CELL_SIZE * CELL_SIZE] = include_u32!("../assets/cell.raw");
 
 pub static BITMAP_CELL: Bitmap = Bitmap {
     width: CELL_SIZE,
     height: CELL_SIZE,
     data: &BITMAP_CELL_DATA,
+};
+
+static BITMAP_X_DATA: [u32; CELL_SIZE * CELL_SIZE] = include_u32!("../assets/x.raw");
+
+pub static BITMAP_X: Bitmap = Bitmap {
+    width: CELL_SIZE,
+    height: CELL_SIZE,
+    data: &BITMAP_X_DATA,
+};
+
+static BITMAP_O_DATA: [u32; CELL_SIZE * CELL_SIZE] = include_u32!("../assets/o.raw");
+
+pub static BITMAP_O: Bitmap = Bitmap {
+    width: CELL_SIZE,
+    height: CELL_SIZE,
+    data: &BITMAP_O_DATA,
+};
+
+static BITMAP_XF_DATA: [u32; CELL_SIZE * CELL_SIZE] = include_u32!("../assets/x_faded.raw");
+
+pub static BITMAP_XF: Bitmap = Bitmap {
+    width: CELL_SIZE,
+    height: CELL_SIZE,
+    data: &BITMAP_XF_DATA,
+};
+
+static BITMAP_OF_DATA: [u32; CELL_SIZE * CELL_SIZE] = include_u32!("../assets/o_faded.raw");
+
+pub static BITMAP_OF: Bitmap = Bitmap {
+    width: CELL_SIZE,
+    height: CELL_SIZE,
+    data: &BITMAP_OF_DATA,
+};
+
+static BITMAP_SELECT_DATA: [u32; CELL_SIZE * CELL_SIZE] = include_u32!("../assets/selected.raw");
+
+pub static BITMAP_SELECT: Bitmap = Bitmap {
+    width: CELL_SIZE,
+    height: CELL_SIZE,
+    data: &BITMAP_SELECT_DATA,
 };

@@ -1,6 +1,13 @@
 from PIL import Image
+from pathlib import Path
 
-im = Image.open("assets/cell.png").convert('RGB')
+files = ["assets/x_faded.png", "assets/cell.png", "assets/o.png", "assets/o_faded.png", "assets/selected.png", "assets/x.png"]
 
-with open("assets/cell.raw", 'wb') as f:
-    f.write(im.tobytes())
+for filename in files:
+    outfile = Path(filename).with_suffix('.raw')
+    print(f"Converting \"{filename}\" -> \"{outfile}\"")
+
+    im = Image.open(filename).convert('RGB')
+
+    with open(outfile, 'wb') as f:
+        f.write(im.tobytes())
