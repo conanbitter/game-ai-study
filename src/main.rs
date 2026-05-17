@@ -1,5 +1,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+mod board;
 mod graphics;
 mod images;
 
@@ -7,7 +8,8 @@ use display_info::DisplayInfo;
 use minifb::{Scale, Window, WindowOptions};
 
 use crate::{
-    graphics::Framebuffer,
+    board::Board,
+    graphics::{Bitmap, Framebuffer},
     images::{BITMAP_CELL, BITMAP_O, BITMAP_OF, BITMAP_SELECT, BITMAP_X, BITMAP_XF, CELL_SIZE},
 };
 
@@ -20,8 +22,17 @@ const WINDOW_HEIGHT: usize = BORDER * 2 + BOARD_ROWS * CELL_SIZE;
 
 const BACKGROUND_COLOR: u32 = 0x98AAB3;
 
+fn debug_draw_line(line: &[usize; 5], cell: &Bitmap, buf: &mut Framebuffer) {
+    for p in line {
+        let x = p % BOARD_COLS;
+        let y = p / BOARD_COLS;
+        buf.blit(cell, BORDER + x * CELL_SIZE, BORDER + y * CELL_SIZE);
+    }
+}
+
 fn main() -> anyhow::Result<()> {
     let mut buffer = Framebuffer::new(WINDOW_WIDTH, WINDOW_HEIGHT, BACKGROUND_COLOR);
+    let mut board = Board::new(BOARD_COLS, BOARD_ROWS);
 
     let mut window = Window::new(
         "Game AI",
@@ -61,8 +72,11 @@ fn main() -> anyhow::Result<()> {
     let mut cursor_pos: (i32, i32) = (0, 0);
     let mut cursor_show = false;
 
+    let mut line_index = 0;
+    debug_draw_line(&board.lines[0], &BITMAP_SELECT, &mut buffer);
+
     while window.is_open() && !window.is_key_down(minifb::Key::Escape) {
-        if let Some(mouse_pos) = window.get_mouse_pos(minifb::MouseMode::Discard) {
+        /*if let Some(mouse_pos) = window.get_mouse_pos(minifb::MouseMode::Discard) {
             let new_cursor_pos = (
                 ((mouse_pos.0 - BORDER as f32) / CELL_SIZE as f32).floor() as i32,
                 ((mouse_pos.1 - BORDER as f32) / CELL_SIZE as f32).floor() as i32,
@@ -99,6 +113,14 @@ fn main() -> anyhow::Result<()> {
                     BORDER + cursor_pos.1 as usize * CELL_SIZE,
                 );
             }
+        }*/
+        if window.is_key_pressed(minifb::Key::D, minifb::KeyRepeat::Yes) {
+            debug_draw_line(&board.lines[line_index], &BITMAP_CELL, &mut buffer);
+            line_index += 1;
+            if line_index >= board.lines.len() {
+                line_index = 0;
+            }
+            debug_draw_line(&board.lines[line_index], &BITMAP_SELECT, &mut buffer);
         }
         window.update_with_buffer(&buffer.data, WINDOW_WIDTH, WINDOW_HEIGHT)?;
     }
